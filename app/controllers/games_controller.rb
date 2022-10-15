@@ -2,12 +2,6 @@ require 'open-uri'
 require 'json'
 class GamesController < ApplicationController
   def new
-    # get request
-    # create array of the alphabet
-
-    # randomly generate letters for the user to see and pick
-    # make post request to the api
-    # pass post request to score page
     letter_array = ('a'..'z').to_a
     @letters = []
     10.times do
@@ -33,39 +27,20 @@ class GamesController < ApplicationController
     json['found']
   end
 
-  def score; end
+  def score
+    @user_answer = params["input"]
+    grid_check = params["user_array"].split("").join.split(" ")
+    compare_check = compare_instances(@user_answer, grid_check)
+    exist_check = word_exists(@user_answer)
+    @responce = ""
+
+    if exist_check == false
+      @responce = "Sorry, but #{@user_answer} is not an English word"
+    elsif compare_check == false
+      @responce = "Sorry but #{@user_answer} can't be built out of #{display(grid_check)} "
+    else
+      @responce = "Congrats buddy, that was a real word my dude...."
+    end
+    @responce
+  end
 end
-
-# longest word challenge w/o rails
-
-# def included?(guess, grid)
-#   guess.chars.all? { |letter| guess.count(letter) <= grid.count(letter) }
-# end
-
-# def compute_score(attempt, time_taken)
-#   time_taken > 60.0 ? 0 : attempt.size * (1.0 - time_taken / 60.0)
-# end
-
-# def run_game(attempt, grid, start_time, end_time)
-#   # TODO: runs the game and return detailed hash of result (with `:score`, `:message` and `:time` keys)
-#   result = { time: end_time - start_time }
-
-#   score_and_message = score_and_message(attempt, grid, result[:time])
-#   result[:score] = score_and_message.first
-#   result[:message] = score_and_message.last
-
-#   result
-# end
-
-# def score_and_message(attempt, grid, time)
-#   if included?(attempt.upcase, grid)
-#     if english_word?(attempt)
-#       score = compute_score(attempt, time)
-#       [score, "well done"]
-#     else
-#       [0, "not an english word"]
-#     end
-#   else
-#     [0, "not in the grid"]
-#   end
-# end
